@@ -29,26 +29,16 @@ export class AuthService {
     }
 
     public loginUser = async(loginUserDto: LoginUserDto)=> {
-        try {
-            const user = await UserModel.findOne({
-                email: loginUserDto.email,
-            });
-    
-            if (!user) throw CustomError.badRequest('Email not registred');
-            if (!bcryptAdapter.compare(loginUserDto.password, user.password!)) throw CustomError.badRequest('Password is wrong');
+        const user = await UserModel.findOne({
+            email: loginUserDto.email,
+        });
 
-            const {email, name, role} = UserEntity.fromObject(user);
-
-            return {
-                user: {
-                    email,
-                    name,
-                    role,
-                },
-                token: 'ABC',
-            }
-        } catch (error) {
-            throw CustomError.internalServer(`${error}`);
+        if (!user) throw CustomError.badRequest('Email not registred');
+        if (!bcryptAdapter.compare(loginUserDto.password, user.password!)) throw CustomError.badRequest('Password is not valid');
+        const {password, ...userEntity}= UserEntity.fromObject(user);
+        return {
+            user: userEntity,
+            token: 'ABC',
         }
     };
 }
