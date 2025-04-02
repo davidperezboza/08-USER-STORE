@@ -1,11 +1,8 @@
-import { UserModel } from "../../data";
-import { CustomError, RegisterUserDto, UserEntity } from "../../domain";
+import { bcryptAdapter } from '../../config';
+import { UserModel } from '../../data';
+import { CustomError, RegisterUserDto, UserEntity } from '../../domain';
 
 export class AuthService {
-    
-    //DI
-    constructor(){};
-
     public async registerUser(registerUserDto: RegisterUserDto){
         const existUser = await UserModel.findOne({
             email: registerUserDto.email,
@@ -15,6 +12,7 @@ export class AuthService {
 
         try {
             const user = new UserModel(registerUserDto);
+            user.password = bcryptAdapter.hash(registerUserDto.password);
 
             await user.save();
 
