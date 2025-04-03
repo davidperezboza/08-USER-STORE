@@ -18,10 +18,11 @@ export class AuthService {
             await user.save();
 
             const {password, ...userEntity} = UserEntity.fromObject(user);
-
+            const token = await JwtAdapter.generateToken({id: userEntity.id});
+            if(!token) throw CustomError.internalServer('Error while creating JWT');
             return {
                 user: userEntity, 
-                token: 'ABC',
+                token,
             };
         } catch (error) {
             throw CustomError.internalServer(`${error}`);
@@ -36,7 +37,7 @@ export class AuthService {
         if (!user) throw CustomError.badRequest('Email not registred');
         if (!bcryptAdapter.compare(loginUserDto.password, user.password!)) throw CustomError.badRequest('Password is not valid');
         const {password, ...userEntity}= UserEntity.fromObject(user);
-        const token = await JwtAdapter.generateToken({id: userEntity.id, email: userEntity.email});
+        const token = await JwtAdapter.generateToken({id: userEntity.id});
         if(!token) throw CustomError.internalServer('Error while creating JWT');
         return {
             user: userEntity,
