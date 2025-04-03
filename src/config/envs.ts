@@ -11,6 +11,7 @@ export const envs = {
   MAILER_SERVICE: get('JWT_SEED').required().asString(),
   MAILER_EMAIL: get('JWT_SEED').required().asString(),
   MAILER_SECRET_KEY: get('JWT_SEED').required().asString(),
+  WEBSERVICE_URL: get("WEBSERVICE_URL").required().asString(),
 }
 
 

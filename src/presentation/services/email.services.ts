@@ -1,4 +1,4 @@
-import nodemailer, {Transporter} from 'nodemailer';
+import nodemailer from 'nodemailer';
 
 export interface SendMailOptions {
     to: string | string[];
@@ -13,7 +13,7 @@ export interface Attachement {
 }
 
 export class EmailService {
-    private transporter: Transporter;
+    private transporter: any;
     
     constructor(
         private readonly mailerService : string,
