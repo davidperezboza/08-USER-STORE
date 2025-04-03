@@ -1,4 +1,4 @@
-import { bcryptAdapter } from '../../config';
+import { bcryptAdapter, JwtAdapter } from '../../config';
 import { UserModel } from '../../data';
 import { CustomError, RegisterUserDto, UserEntity } from '../../domain';
 import { LoginUserDto } from '../../domain/dtos/auth/login-user.dto';
@@ -36,9 +36,11 @@ export class AuthService {
         if (!user) throw CustomError.badRequest('Email not registred');
         if (!bcryptAdapter.compare(loginUserDto.password, user.password!)) throw CustomError.badRequest('Password is not valid');
         const {password, ...userEntity}= UserEntity.fromObject(user);
+        const token = await JwtAdapter.generateToken({id: userEntity.id, email: userEntity.email});
+        if(!token) throw CustomError.internalServer('Error while creating JWT');
         return {
             user: userEntity,
-            token: 'ABC',
+            token,
         }
     };
 }
