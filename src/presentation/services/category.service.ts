@@ -1,5 +1,5 @@
 import { CategoryModel } from '../../data';
-import { CreateCategoryDto, CustomError, UserEntity } from '../../domain';
+import { CreateCategoryDto, CustomError, PaginationDto, UserEntity } from '../../domain';
 import { CategoryEntity } from '../../domain/entities/category.entity';
 
 export class CategoryService {
@@ -28,11 +28,21 @@ export class CategoryService {
         }
     };
 
-    public getCategories = async() => {
+    public getCategories = async(paginationDto: PaginationDto) => {
+        const {page, limit} = paginationDto;
+    
         try {
-            const categories = await CategoryModel.find();
+            const total = await CategoryModel.countDocuments();
+            const categories = await CategoryModel.find()
+                .skip((page - 1) * limit)
+                .limit(limit);
+        
             const categoryEntity = CategoryEntity.fromArrayObject(categories);
-            return categoryEntity;
+            return {
+                page: page,
+                limit: limit,
+                categories: categoryEntity,
+            };
         } catch (error) {
             throw CustomError.internalServer();
         }

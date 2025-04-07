@@ -38,9 +38,8 @@ export class CategoryContoller {
             res.status(400).json({error});
             return;
         };
-        res.json(paginationDto);
-        
-        this.categoryService.getCategories()
+
+        this.categoryService.getCategories(paginationDto!)
             .then(categories => res.status(201).json(categories))
             .catch(error => this.handleError(error, res));
     };
