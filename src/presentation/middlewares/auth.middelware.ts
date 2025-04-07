@@ -30,12 +30,12 @@ export class AuthMiddleware{
             const user = await UserModel.findById(payload.id);
 
             if(!user){
-                res.status(401).json('Invalid token - user');
+                res.status(401).json({error: 'Invalid token - user'});
                 return;
             }
 
             if(!user.emailValidated) {
-                res.status(401).json('User not validated');
+                res.status(401).json({error: 'User not validated'});
                 return;
             };
 
