@@ -1,5 +1,6 @@
 import { CategoryModel } from '../../data';
 import { CreateCategoryDto, CustomError, UserEntity } from '../../domain';
+import { CategoryEntity } from '../../domain/entities/category.entity';
 
 export class CategoryService {
     constructor(){};
@@ -26,4 +27,14 @@ export class CategoryService {
             throw CustomError.internalServer(`${error}`);
         }
     };
+
+    public getCategories = async() => {
+        try {
+            const categories = await CategoryModel.find();
+            const categoryEntity = CategoryEntity.fromArrayObject(categories);
+            return categoryEntity;
+        } catch (error) {
+            throw CustomError.internalServer();
+        }
+    }
 };

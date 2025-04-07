@@ -31,7 +31,9 @@ export class CategoryContoller {
     };
 
     public getCategory = (req: Request, res: Response) => {
-        res.json('Get Category');
+        this.categoryService.getCategories()
+            .then(categories => res.status(201).json(categories))
+            .catch(error => this.handleError(error, res));
     };
     
 };
