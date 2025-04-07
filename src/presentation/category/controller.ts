@@ -1,8 +1,11 @@
 import { CreateCategoryDto, CustomError } from '../../domain';
 import { Request, Response } from 'express';
+import { CategoryService } from '../services';
 
 export class CategoryContoller {
-    constructor(){};
+    constructor(
+        private readonly categoryService: CategoryService,
+    ){};
 
     private handleError = (error: unknown, res: Response) => {
         if (error instanceof CustomError){
@@ -13,7 +16,7 @@ export class CategoryContoller {
         res.status(500).json({error: 'Internal server error'});
     };
 
-    public createCategory = async(req: Request, res: Response) => {
+    public createCategory = (req: Request, res: Response) => {
         const [error, createCategoryDto] = CreateCategoryDto.create(req.body);
 
         if(error){
@@ -21,10 +24,13 @@ export class CategoryContoller {
             return;
         }
 
-        res.json(createCategoryDto);
+        this.categoryService.createCategory( createCategoryDto!, req.body.user )
+            .then( category => res.status( 201 ).json( category ) )
+            .catch( error => this.handleError( error, res ) );
+  
     };
 
-    public getCategory = async(req: Request, res: Response) => {
+    public getCategory = (req: Request, res: Response) => {
         res.json('Get Category');
     };
     
