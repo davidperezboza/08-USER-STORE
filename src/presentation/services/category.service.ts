@@ -32,15 +32,24 @@ export class CategoryService {
         const {page, limit} = paginationDto;
     
         try {
-            const total = await CategoryModel.countDocuments();
-            const categories = await CategoryModel.find()
+            //const total = await CategoryModel.countDocuments();
+            //const categories = await CategoryModel.find()
+            //    .skip((page - 1) * limit)
+            //    .limit(limit);
+        //
+            const [total, categories] = await Promise.all([
+                CategoryModel.countDocuments(),
+                CategoryModel.find()
                 .skip((page - 1) * limit)
-                .limit(limit);
-        
+                .limit(limit),  
+            ]);
             const categoryEntity = CategoryEntity.fromArrayObject(categories);
             return {
                 page: page,
                 limit: limit,
+                total: total,
+                next: `/api/categories?page=${page + 1}&limit=${limit}`,
+                prev: (page -1 > 0) ? `/api/categories?page=${(page - 1)}&limit=${limit}` : null,
                 categories: categoryEntity,
             };
         } catch (error) {
