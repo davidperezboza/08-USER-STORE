@@ -1,9 +1,10 @@
-import { CreateCategoryDto, CustomError, PaginationDto } from '../../domain';
+import { CustomError, PaginationDto, CreateProductDto } from '../../domain';
 import { Request, Response } from 'express';
+import { ProductService } from '../services';
 
 export class ProductController {
     constructor(
-        //todo: private readonly productService: ProductService,
+        private readonly productService: ProductService,
     ){};
 
     private handleError = (error: unknown, res: Response) => {
@@ -16,33 +17,31 @@ export class ProductController {
     };
 
     public createProduct = (req: Request, res: Response) => {
-        res.json('create Products');
-        //const [error, createCategoryDto] = CreateCategoryDto.create(req.body);
-//
-        //if(error){
-        //    res.status(400).json({error});
-        //    return;
-        //}
-//
-        //this.categoryService.createCategory( createCategoryDto!, req.body.user )
-        //    .then( category => res.status( 201 ).json( category ) )
-        //    .catch( error => this.handleError( error, res ) );
+        const [error, createProductDto] = CreateProductDto.create(req.body);
+
+        if(error){
+            res.status(400).json({error});
+            return;
+        }
+
+        this.productService.createProduct( createProductDto!)
+            .then( product => res.status( 201 ).json( product ) )
+            .catch( error => this.handleError( error, res ) );
   
     };
 
     public getProducts = (req: Request, res: Response) => {
-        res.json('get Products');
-        //onst {page = 1, limit = 10} = req.query;
-        //onst [error, paginationDto] = PaginationDto.create(+page, +limit);
+        const {page = 1, limit = 10} = req.query;
+        const [error, paginationDto] = PaginationDto.create(+page, +limit);
 
-        //f(error){
-        //   res.status(400).json({error});
-        //   return;
-        //;
+        if(error){
+           res.status(400).json({error});
+           return;
+        };
 
-        //his.categoryService.getCategories(paginationDto!)
-        //   .then(categories => res.status(201).json(categories))
-        //   .catch(error => this.handleError(error, res));
+        this.productService.getProducts(paginationDto!)
+           .then(products => res.status(201).json(products))
+           .catch(error => this.handleError(error, res));
     };
     
 };
