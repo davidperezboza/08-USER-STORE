@@ -42,7 +42,7 @@ export class ProductController {
         };
 
         this.productService.getProducts(paginationDto!)
-           .then(products => res.status(201).json(products))
+           .then(products => res.status(200).json(products))
            .catch(error => this.handleError(error, res));
     };
     
