@@ -1,15 +1,14 @@
 import { Router } from 'express';
-import { AuthMiddleware } from '../middlewares/auth.middelware';
-import { FileUploadContoller } from '../category/controller';
+import { FileUploadController } from './controller';
 
 export class FileUploadRoutes {
-    static get routes(): Router {
+  static get routes(): Router {
 
     const router = Router();
-    const controller = new FileUploadContoller;
+    const controller = new FileUploadController();
   
-    router.get('/', controller.getCategory);
-    router.post('/', [AuthMiddleware.validateJWT], controller.createCategory);
+    router.post('/single/:type', controller.uploadFile);
+    router.post('/multiple/:type', controller.uploadMultipleFile);
 
     return router;
   }
