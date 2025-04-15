@@ -18,6 +18,13 @@ export class FileUploadController {
     };
 
     public uploadFile = (req: Request, res: Response) => {
+        const type = req.params.type;
+        const validTypes = ['users', 'products', 'categories']
+        if(!validTypes.includes(type)){
+            res.status(400).json({error: `Invalid type: ${type}, valid ones ${validTypes}`});
+            return;
+        };
+
         if (!req.files || Object.keys(req.files).length === 0) {
             res.status(400).json({errorr: 'No files were selected'});
             return;
@@ -25,7 +32,7 @@ export class FileUploadController {
 
         const file = req.files.file as UploadedFile;
 
-        this.fileUploadService.uploadSingle(file)
+        this.fileUploadService.uploadSingle(file, `uploads/${type}`)
             .then(uploaded => res.json(uploaded))
             .catch(error => this.handleError(error, res));
     };
