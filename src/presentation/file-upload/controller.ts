@@ -16,7 +16,8 @@ export class FileUploadController {
     };
 
     public uploadFile = (req: Request, res: Response) => {
-       res.json('uploadFile');
+        console.log(req.files);
+        res.json('uploadFile');
     };
 
     public uploadMultipleFile = (req: Request, res: Response) => {
